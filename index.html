@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Driving — МКПП</title>
+<title>Driving</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{width:100%;height:100%;overflow:hidden;background:#87ceeb;font-family:Arial;touch-action:none}
@@ -11,28 +11,58 @@ html,body{width:100%;height:100%;overflow:hidden;background:#87ceeb;font-family:
 #hud{position:fixed;inset:0;pointer-events:none;z-index:10}
 #speedo{position:absolute;top:8px;left:8px;width:100px;height:100px}
 #tacho{position:absolute;top:8px;left:118px;width:100px;height:100px}
-#gearDisplay{position:absolute;top:8px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:6px;text-align:center}
+#gearDisplay{position:absolute;top:8px;left:50%;transform:translateX(-50%);color:#fff;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:6px;text-align:center;min-width:70px}
 #gearDisplay .lbl{font-size:9px;color:#aaa}
 #gearDisplay .val{font-size:22px;font-weight:bold;color:#4f4}
-#stallMsg{position:absolute;top:60px;left:50%;transform:translateX(-50%);color:#f55;font-size:12px;font-weight:bold;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:4px;display:none}
+#stallMsg{position:absolute;top:62px;left:50%;transform:translateX(-50%);color:#f55;font-size:12px;font-weight:bold;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:4px;display:none}
 #stallMsg.on{display:block}
-#steerBtns{position:fixed;bottom:20px;left:14px;z-index:11;display:flex;gap:12px;pointer-events:auto}
-.steerBtn{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:26px;font-weight:bold;display:flex;align-items:center;justify-content:center}
-.steerBtn.active{background:rgba(100,180,255,.7);border-color:#6af}
-#pedals{position:fixed;bottom:20px;right:14px;z-index:11;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
-.pedal{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:12px;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center}
-.pedal.active{background:rgba(255,80,80,.6);border-color:#f66}
-#clutch{background:rgba(80,80,200,.25)}
-#clutch.active{background:rgba(100,100,255,.7)}
-#gearLever{position:fixed;top:50%;right:8px;transform:translateY(-50%);z-index:11;display:flex;flex-direction:column;gap:4px;pointer-events:auto;padding:8px 6px;background:rgba(0,0,0,.5);border-radius:10px}
-.gBtn{width:44px;height:40px;border-radius:6px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);color:#fff;font-size:16px;font-weight:bold;display:flex;align-items:center;justify-content:center}
-.gBtn.active{background:rgba(80,200,80,.7);border-color:#5f5}
 #soundBtn{position:fixed;top:8px;right:8px;z-index:12;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.5);border:2px solid #fff;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;pointer-events:auto}
 #speedVal{position:absolute;top:82px;left:8px;width:100px;text-align:center;color:#fff;font-size:10px;font-weight:bold;text-shadow:0 0 3px #000}
 #rpmVal{position:absolute;top:82px;left:118px;width:100px;text-align:center;color:#fff;font-size:10px;font-weight:bold;text-shadow:0 0 3px #000}
-#msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,.8);padding:14px 22px;border-radius:10px;font-size:14px;z-index:15;display:none;text-align:center;max-width:80%}
+
+/* Нижняя панель управления */
+#controls{position:fixed;bottom:0;left:0;right:0;z-index:11;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(0,0,0,.7),transparent);display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+
+/* Рулевые кнопки слева */
+#steerWrap{display:flex;gap:10px}
+.sBtn{
+  width:66px;height:66px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.6);
+  color:#fff;font-size:24px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;
+}
+.sBtn.pressed{background:rgba(100,180,255,.8)}
+
+/* Рычаг КПП по центру */
+#gearWrap{display:flex;flex-direction:column;gap:4px;align-items:center}
+#gearRow1,#gearRow2{display:flex;gap:4px}
+.gBtn{
+  width:42px;height:38px;border-radius:6px;
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);
+  color:#fff;font-size:15px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;
+}
+.gBtn.active{background:rgba(80,200,80,.8);border-color:#5f5}
+.gBtn.pressed{background:rgba(120,220,120,.9)}
+
+/* Педали справа */
+#pedalWrap{display:flex;flex-direction:column;gap:8px}
+.pBtn{
+  width:66px;height:66px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.5);
+  color:#fff;font-size:11px;font-weight:bold;
+  display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;
+}
+.pBtn.pressed{background:rgba(255,80,80,.7)}
+#clutchBtn{background:rgba(80,80,200,.3)}
+#clutchBtn.pressed{background:rgba(120,120,255,.8)}
+
+#msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,.85);padding:14px 22px;border-radius:10px;font-size:14px;z-index:15;display:none;text-align:center;max-width:80%}
 #msg.on{display:block}
-#startHint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,.75);padding:16px 20px;border-radius:10px;font-size:13px;z-index:14;text-align:center;line-height:1.6;pointer-events:auto;border:2px solid #4f4}
+#startHint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;background:rgba(0,0,0,.8);padding:16px 20px;border-radius:10px;font-size:13px;z-index:14;text-align:center;line-height:1.7;border:2px solid #4f4;max-width:85%}
 #startHint.hidden{display:none}
 #startHint b{color:#4f4}
 </style>
@@ -50,40 +80,48 @@ html,body{width:100%;height:100%;overflow:hidden;background:#87ceeb;font-family:
   <div id="speedVal">0 км/ч</div>
   <div id="rpmVal">900 об/мин</div>
 </div>
-<div id="steerBtns">
-  <div class="steerBtn" id="steerL">◄</div>
-  <div class="steerBtn" id="steerR">►</div>
-</div>
-<div id="pedals">
-  <div class="pedal" id="gasPed">ГАЗ</div>
-  <div class="pedal" id="brakePed">ТОРМОЗ</div>
-  <div class="pedal" id="clutch">СЦЕП</div>
-</div>
-<div id="gearLever">
-  <div class="gBtn" data-g="1">1</div>
-  <div class="gBtn" data-g="2">2</div>
-  <div class="gBtn" data-g="3">3</div>
-  <div class="gBtn" data-g="4">4</div>
-  <div class="gBtn" data-g="5">5</div>
-  <div class="gBtn" data-g="R">R</div>
-  <div class="gBtn active" data-g="N">N</div>
-</div>
 <div id="soundBtn">🔊</div>
+
+<div id="controls">
+  <div id="steerWrap">
+    <button class="sBtn" id="steerL">◄</button>
+    <button class="sBtn" id="steerR">►</button>
+  </div>
+  <div id="gearWrap">
+    <div id="gearRow1">
+      <button class="gBtn" data-g="1">1</button>
+      <button class="gBtn" data-g="2">2</button>
+      <button class="gBtn" data-g="3">3</button>
+      <button class="gBtn" data-g="4">4</button>
+      <button class="gBtn" data-g="5">5</button>
+    </div>
+    <div id="gearRow2">
+      <button class="gBtn" data-g="R">R</button>
+      <button class="gBtn active" data-g="N">N</button>
+    </div>
+  </div>
+  <div id="pedalWrap">
+    <button class="pBtn" id="gasBtn">ГАЗ</button>
+    <button class="pBtn" id="brakeBtn">ТОРМ</button>
+    <button class="pBtn" id="clutchBtn">СЦЕП</button>
+  </div>
+</div>
+
 <div id="msg"></div>
 <div id="startHint">
   <b>Как поехать:</b><br>
-  1. Нажми <b>СЦЕП</b> (справа)<br>
-  2. Выбери <b>1</b> на рычаге справа<br>
+  1. Зажми <b>СЦЕП</b> (справа)<br>
+  2. Тапни <b>1</b> (в центре)<br>
   3. Отпусти СЦЕП<br>
-  4. Жми <b>ГАЗ</b><br>
-  5. Крути <b>◄ ►</b> для поворота<br>
+  4. Зажми <b>ГАЗ</b><br>
+  5. <b>◄ ►</b> — поворот<br>
   <br>
-  <i>Нажми сюда, чтобы закрыть</i>
+  <i>Тапни сюда чтобы убрать</i>
 </div>
 
 <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <script>
-// ============ SCENE ============
+// ============ СЦЕНА ============
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x87ceeb);
 scene.fog=new THREE.Fog(0x87ceeb,80,300);
@@ -94,11 +132,13 @@ renderer.setSize(innerWidth,innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0x445566,1.1));
 const sun=new THREE.DirectionalLight(0xffffff,1.3);
-sun.position.set(80,150,60);
-scene.add(sun);
+sun.position.set(80,150,60);scene.add(sun);
+
+// земля
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(600,600),new THREE.MeshLambertMaterial({color:0x3a5a3a}));
-ground.rotation.x=-Math.PI/2;
-scene.add(ground);
+ground.rotation.x=-Math.PI/2;scene.add(ground);
+
+// дороги
 const roadMat=new THREE.MeshLambertMaterial({color:0x1a1a1a});
 for(let i=-3;i<=3;i++){
   const h=new THREE.Mesh(new THREE.PlaneGeometry(600,10),roadMat);
@@ -106,6 +146,7 @@ for(let i=-3;i<=3;i++){
   const v=new THREE.Mesh(new THREE.PlaneGeometry(10,600),roadMat);
   v.rotation.x=-Math.PI/2;v.position.set(i*50,.01,0);scene.add(v);
 }
+// разметка
 const lineMat=new THREE.MeshBasicMaterial({color:0xffff00});
 for(let i=-3;i<=3;i++)for(let j=-300;j<=300;j+=8){
   const hl=new THREE.Mesh(new THREE.PlaneGeometry(4,.4),lineMat);
@@ -115,6 +156,8 @@ for(let i=-3;i<=3;i++)for(let j=-300;j<=300;j+=8){
   const vl=new THREE.Mesh(new THREE.PlaneGeometry(.4,4),lineMat);
   vl.rotation.x=-Math.PI/2;vl.position.set(i*50,.02,j);scene.add(vl);
 }
+
+// здания
 const bColors=[0x8899aa,0xaa9988,0x99aabb,0xbbaa99,0xa0a0a0];
 function mkBuilding(x,z,w,d,f){
   const g=new THREE.Group();g.position.set(x,0,z);
@@ -123,12 +166,11 @@ function mkBuilding(x,z,w,d,f){
   const h=f*4;
   const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
   b.position.y=h/2;g.add(b);
-  const windowMat=new THREE.MeshBasicMaterial({color:0xffdd88});
+  const wm=new THREE.MeshBasicMaterial({color:0xffdd88});
   for(let i=0;i<f;i++)for(let k=0;k<3;k++){
     if(Math.random()>0.6)continue;
-    const ww=new THREE.Mesh(new THREE.PlaneGeometry(1,1),windowMat);
-    ww.position.set((k-1)*w/3.5,i*4+2.5,d/2+.01);
-    g.add(ww);
+    const ww=new THREE.Mesh(new THREE.PlaneGeometry(1,1),wm);
+    ww.position.set((k-1)*w/3.5,i*4+2.5,d/2+.01);g.add(ww);
   }
   scene.add(g);
 }
@@ -142,6 +184,7 @@ for(let gx=-3;gx<=3;gx++)for(let gz=-3;gz<=3;gz++){
     mkBuilding(bx,bz,8+Math.random()*4,8+Math.random()*4,3+Math.floor(Math.random()*7));
   }
 }
+// фонари
 const poleMat=new THREE.MeshLambertMaterial({color:0x333333});
 const poleGeo=new THREE.CylinderGeometry(.2,.2,8,6);
 const lampMat=new THREE.MeshBasicMaterial({color:0xffdd55});
@@ -154,8 +197,7 @@ for(let i=-3;i<=3;i++)for(let j=-300;j<=300;j+=30){
 }
 
 // ============ МАШИНА ============
-const car={};
-car.group=new THREE.Group();
+const car={group:new THREE.Group()};
 const carBody=new THREE.Mesh(new THREE.BoxGeometry(1.8,.7,4),new THREE.MeshLambertMaterial({color:0xcc3333}));
 carBody.position.y=.6;car.group.add(carBody);
 const hood=new THREE.Mesh(new THREE.BoxGeometry(1.8,.4,1),new THREE.MeshLambertMaterial({color:0xaa2222}));
@@ -172,13 +214,12 @@ const wheelMat=new THREE.MeshLambertMaterial({color:0x111111});
 car.wheels=[];
 for(const wx of[-.95,.95])for(const wz of[1.3,-1.3]){
   const w=new THREE.Mesh(wheelGeo,wheelMat);
-  w.rotation.z=Math.PI/2;
-  w.position.set(wx,.4,wz);
+  w.rotation.z=Math.PI/2;w.position.set(wx,.4,wz);
   car.group.add(w);car.wheels.push(w);
 }
-const lightMat=new THREE.MeshBasicMaterial({color:0xffffcc});
+const lMat=new THREE.MeshBasicMaterial({color:0xffffcc});
 for(const fx of[-.6,.6]){
-  const l=new THREE.Mesh(new THREE.BoxGeometry(.35,.25,.1),lightMat);
+  const l=new THREE.Mesh(new THREE.BoxGeometry(.35,.25,.1),lMat);
   l.position.set(fx,.7,2);car.group.add(l);
 }
 car.group.position.set(0,0,0);
@@ -199,10 +240,8 @@ function initAudio(){
   try{
     audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     engineOsc=audioCtx.createOscillator();
-    engineOsc.type='sawtooth';
-    engineOsc.frequency.value=40;
-    engineGain=audioCtx.createGain();
-    engineGain.gain.value=0;
+    engineOsc.type='sawtooth';engineOsc.frequency.value=40;
+    engineGain=audioCtx.createGain();engineGain.gain.value=0;
     const filt=audioCtx.createBiquadFilter();
     filt.type='lowpass';filt.frequency.value=800;
     engineOsc.connect(filt);filt.connect(engineGain);engineGain.connect(audioCtx.destination);
@@ -218,32 +257,38 @@ function updateAudio(){
   engineGain.gain.setTargetAtTime(vol,audioCtx.currentTime,.05);
 }
 
-// ============ УПРАВЛЕНИЕ ============
-function bindSteer(id,val){
-  const el=document.getElementById(id);
-  el.addEventListener('touchstart',e=>{e.preventDefault();state.steerInput=val;el.classList.add('active');},{passive:false});
-  el.addEventListener('touchend',e=>{e.preventDefault();state.steerInput=0;el.classList.remove('active');},{passive:false});
-  el.addEventListener('touchcancel',e=>{state.steerInput=0;el.classList.remove('active');});
-  el.addEventListener('mousedown',e=>{e.preventDefault();state.steerInput=val;el.classList.add('active');});
-  el.addEventListener('mouseup',e=>{state.steerInput=0;el.classList.remove('active');});
+// ============ ХЕЛПЕР ДЛЯ КНОПОК ============
+function bindHold(elId, onPress, onRelease){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const press=function(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    el.classList.add('pressed');
+    onPress();
+  };
+  const release=function(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    el.classList.remove('pressed');
+    if(onRelease)onRelease();
+  };
+  el.addEventListener('touchstart',press,{passive:false});
+  el.addEventListener('touchend',release,{passive:false});
+  el.addEventListener('touchcancel',release,{passive:false});
+  el.addEventListener('mousedown',press);
+  el.addEventListener('mouseup',release);
+  el.addEventListener('mouseleave',release);
 }
-// ИСПРАВЛЕНО: ◄ даёт steering=-1 (влево), ► даёт +1 (вправо)
-bindSteer('steerL',-1);
-bindSteer('steerR',1);
 
-function bindPedal(id,key){
-  const el=document.getElementById(id);
-  el.addEventListener('touchstart',e=>{e.preventDefault();state[key]=true;el.classList.add('active');},{passive:false});
-  el.addEventListener('touchend',e=>{e.preventDefault();state[key]=false;el.classList.remove('active');},{passive:false});
-  el.addEventListener('touchcancel',e=>{state[key]=false;el.classList.remove('active');});
-  el.addEventListener('mousedown',e=>{e.preventDefault();state[key]=true;el.classList.add('active');});
-  el.addEventListener('mouseup',e=>{state[key]=false;el.classList.remove('active');});
-}
-bindPedal('gasPed','gas');
-bindPedal('brakePed','brake');
-bindPedal('clutch','clutch');
+// Руль
+bindHold('steerL', ()=>{state.steerInput=-1;}, ()=>{if(state.steerInput===-1)state.steerInput=0;});
+bindHold('steerR', ()=>{state.steerInput=1;},  ()=>{if(state.steerInput===1)state.steerInput=0;});
 
-// ИСПРАВЛЕНО: передачи через touchstart (работает на телефоне)
+// Педали
+bindHold('gasBtn', ()=>{state.gas=true;}, ()=>{state.gas=false;});
+bindHold('brakeBtn', ()=>{state.brake=true;}, ()=>{state.brake=false;});
+bindHold('clutchBtn', ()=>{state.clutch=true;}, ()=>{state.clutch=false;});
+
+// ============ ПЕРЕДАЧИ (click — работает надежно) ============
 const gearBtns=document.querySelectorAll('.gBtn');
 gearBtns.forEach(btn=>{
   const handler=function(e){
@@ -258,16 +303,27 @@ gearBtns.forEach(btn=>{
     gearBtns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('gearVal').textContent=g;
+    // вибро-отклик
+    if(navigator.vibrate)navigator.vibrate(30);
   };
-  btn.addEventListener('touchstart',handler,{passive:false});
-  btn.addEventListener('mousedown',handler);
+  btn.addEventListener('click',handler);
+  // touchstart тоже, для скорости (с защитой от двойного срабатывания)
+  let touched=false;
+  btn.addEventListener('touchstart',e=>{
+    touched=true;
+    handler(e);
+  },{passive:false});
+  btn.addEventListener('touchend',e=>{
+    e.preventDefault();
+    setTimeout(()=>{touched=false;},50);
+  },{passive:false});
 });
 
 function showMsg(text){
   const m=document.getElementById('msg');
   m.textContent=text;m.classList.add('on');
   clearTimeout(m._t);
-  m._t=setTimeout(()=>m.classList.remove('on'),2000);
+  m._t=setTimeout(()=>m.classList.remove('on'),1800);
 }
 
 document.getElementById('soundBtn').addEventListener('click',()=>{
@@ -282,10 +338,10 @@ document.getElementById('startHint').addEventListener('click',function(){
 // ============ ПРИБОРЫ ============
 const speedoCtx=document.getElementById('speedo').getContext('2d');
 const tachoCtx=document.getElementById('tacho').getContext('2d');
-function drawGauge(ctx,max,value,label,unit,redFrom){
+function drawGauge(ctx,max,value,label,redFrom){
   const W=200,H=200,cx=100,cy=100;
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='rgba(0,0,0,.7)';
+  ctx.fillStyle='rgba(0,0,0,.75)';
   ctx.beginPath();ctx.arc(cx,cy,90,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#555';ctx.lineWidth=3;
   ctx.beginPath();ctx.arc(cx,cy,90,0,Math.PI*2);ctx.stroke();
@@ -299,41 +355,40 @@ function drawGauge(ctx,max,value,label,unit,redFrom){
   ctx.fillStyle='#fff';ctx.font='bold 9px Arial';ctx.textAlign='center';
   for(let i=0;i<=10;i++){
     const a=Math.PI*.75+(i/10)*Math.PI*1.5;
-    const x1=cx+Math.cos(a)*78,y1=cy+Math.sin(a)*78;
-    const x2=cx+Math.cos(a)*86,y2=cy+Math.sin(a)*86;
-    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-    const tx=cx+Math.cos(a)*66,ty=cy+Math.sin(a)*66;
-    ctx.fillText(Math.round(max*i/10),tx,ty+3);
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*78,cy+Math.sin(a)*78);
+    ctx.lineTo(cx+Math.cos(a)*86,cy+Math.sin(a)*86);ctx.stroke();
+    ctx.fillText(Math.round(max*i/10),cx+Math.cos(a)*66,cy+Math.sin(a)*66+3);
   }
   const val=Math.min(value,max);
   const a=Math.PI*.75+(val/max)*Math.PI*1.5;
   ctx.strokeStyle='#ff3333';ctx.lineWidth=3;
   ctx.beginPath();ctx.moveTo(cx,cy);
   ctx.lineTo(cx+Math.cos(a)*68,cy+Math.sin(a)*68);ctx.stroke();
-  ctx.fillStyle='#ddd';
-  ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#ddd';ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#8af';ctx.font='bold 10px Arial';
   ctx.fillText(label,cx,cy+30);
 }
-function drawSpeedo(){drawGauge(speedoCtx,180,Math.abs(state.speed)*3.6,'км/ч','',120);}
-function drawTacho(){drawGauge(tachoCtx,8000,state.rpm,'об/мин','',6000);}
 
 // ============ ФИЗИКА ============
 function updatePhysics(dt){
-  const target=state.steerInput;
-  state.steering+=(target-state.steering)*Math.min(1,dt*8);
-  if(Math.abs(state.speed)<0.5)state.steering*=0.95;
+  // Руль плавно
+  state.steering+=(state.steerInput-state.steering)*Math.min(1,dt*10);
+  if(Math.abs(state.speed)<0.5&&state.steerInput===0)state.steering*=0.9;
 
+  // Двигатель
   if(state.stalled){
     state.rpm=Math.max(0,state.rpm-3000*dt);
-    if(state.gear==='N'&&state.clutch&&state.gas&&state.rpm<100){
-      state.stalled=false;state.rpm=900;
+    // запуск
+    if(state.gear==='N'&&state.clutch&&state.gas){
+      state.stalled=false;
+      state.rpm=1500;
     }
   }else{
     let targetRpm=900;
     if(state.gas){
       if(state.gear==='N'||state.clutch){
-        targetRpm=Math.min(7000,900+(state.rpm-900)+3000*dt*15+state.rpm*0.15);
+        targetRpm=Math.min(7000,state.rpm+2500*dt+state.rpm*0.5*dt);
       }else{
         const ratio=Math.abs(gearRatios[state.gear]);
         const wheelRpm=Math.abs(state.speed)*60/(2*Math.PI*0.4);
@@ -347,7 +402,7 @@ function updatePhysics(dt){
         if(targetRpm<600&&Math.abs(state.speed)<1){
           state.stalled=true;state.rpm=0;
           document.getElementById('stallMsg').classList.add('on');
-          showMsg('ЗАГЛОХ!\nСЦЕП + N + ГАЗ чтобы завести');
+          showMsg('ЗАГЛОХ!\nСЦЕП + N + ГАЗ = запуск');
         }
       }
     }
@@ -355,25 +410,29 @@ function updatePhysics(dt){
     state.rpm=Math.max(0,Math.min(7500,state.rpm));
   }
 
+  // Тяга
   let force=0;
   if(!state.stalled&&state.gear!=='N'&&!state.clutch){
     const ratio=gearRatios[state.gear];
     const rpmPower=Math.max(0,(state.rpm-900)/5000);
     force=ratio*rpmPower*6;
   }
-  if(state.brake)state.speed-=Math.sign(state.speed)*Math.min(Math.abs(state.speed),20*dt);
+  if(state.brake){
+    state.speed-=Math.sign(state.speed)*Math.min(Math.abs(state.speed),20*dt);
+  }
   state.speed-=state.speed*0.3*dt;
   state.speed+=force*dt;
   state.speed=Math.max(-30,Math.min(70,state.speed));
   if(Math.abs(state.speed)<0.05)state.speed=0;
 
+  // Поворот
   if(Math.abs(state.speed)>0.5){
     const speedFactor=Math.min(1.5,Math.abs(state.speed)/8);
-    const turnRate=state.steering*speedFactor*1.2*dt;
-    state.angle+=turnRate*Math.sign(state.speed);
+    state.angle+=state.steering*speedFactor*1.2*dt*Math.sign(state.speed);
   }
   state.x+=Math.sin(state.angle)*state.speed*dt;
   state.z+=Math.cos(state.angle)*state.speed*dt;
+
   car.group.position.set(state.x,0,state.z);
   car.group.rotation.y=state.angle;
   const wheelRotation=state.speed*dt/0.4;
@@ -382,11 +441,12 @@ function updatePhysics(dt){
 
 // ============ КАМЕРА ============
 function updateCamera(){
-  const camDist=9;
-  const camHeight=4;
-  const camX=state.x-Math.sin(state.angle)*camDist;
-  const camZ=state.z-Math.cos(state.angle)*camDist;
-  camera.position.set(camX,camHeight,camZ);
+  const camDist=9,camHeight=4;
+  camera.position.set(
+    state.x-Math.sin(state.angle)*camDist,
+    camHeight,
+    state.z-Math.cos(state.angle)*camDist
+  );
   camera.lookAt(state.x,1,state.z);
 }
 
@@ -402,7 +462,8 @@ function loop(){
   hudTimer+=dt;
   if(hudTimer>0.1){
     hudTimer=0;
-    drawSpeedo();drawTacho();
+    drawGauge(speedoCtx,180,Math.abs(state.speed)*3.6,'км/ч',120);
+    drawGauge(tachoCtx,8000,state.rpm,'об/мин',6000);
     document.getElementById('speedVal').textContent=Math.round(Math.abs(state.speed)*3.6)+' км/ч';
     document.getElementById('rpmVal').textContent=Math.round(state.rpm)+' об/мин';
     if(!state.stalled)document.getElementById('stallMsg').classList.remove('on');
